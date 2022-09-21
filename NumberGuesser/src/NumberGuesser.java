@@ -30,6 +30,15 @@ import javafx.util.Duration;
 
 public class NumberGuesser extends Application {
 
+	
+	
+	private Scene mainScene;
+	
+	private Scene gameOverScene;
+	private VBox gameOverVBox;
+	
+	
+	
 	private final static Integer minimum = 0;
 	private final static Integer maximum = 100;
 	private Integer higherThan;
@@ -37,6 +46,14 @@ public class NumberGuesser extends Application {
 	private Integer hiddenNumber;
 	private Integer guessNumber;
 	private int count = 0;
+	private Integer recordScore = null;
+	private final TextField guessTextField = new TextField();
+	private final Text lowerThanText = new Text();
+	private final Text higherThanText = new Text();
+	private final Label guessessFeedback = new Label();
+	private final Text feedback = new Text();
+	private final Text recordText = new Text("Record: -");
+	
 	
 	public NumberGuesser() {
 		// TODO Auto-generated constructor stub
@@ -50,8 +67,8 @@ public class NumberGuesser extends Application {
 		lowerThan = maximum;
 		
 		// storing higher than and lower than variables
-		final Text higherThanText = new Text(minimum.toString());
-		final Text lowerThanText = new Text(maximum.toString());
+		higherThanText.setText(minimum.toString());
+		lowerThanText.setText(maximum.toString());
 		
 		hiddenNumber = (int) (Math.random() * (maximum)) + minimum; // random number between maximum and minimum
 		System.out.println(hiddenNumber);
@@ -80,13 +97,15 @@ public class NumberGuesser extends Application {
 		
 		// adding nodes to the bottom pane	
 		HBox bottom = new HBox();
-		Label guessessFeedback = new Label("Number of guesses: " + count);
+		guessessFeedback.setText("Number of guesses: " + count);
 		bottom.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, null, null)));
 		bottom.setPrefHeight(50);
 		border.setBottom(bottom);
 		bottom.getChildren().add(guessessFeedback);
 		bottom.setMargin(guessessFeedback, new Insets(10));
 		bottom.setAlignment(Pos.CENTER);
+		
+		bottom.getChildren().add(recordText);
 		
 		
 		
@@ -101,7 +120,6 @@ public class NumberGuesser extends Application {
 		topHBox.setMargin(heading, new Insets(10));
 		
 		// textbox
-		final TextField guessTextField = new TextField ();
 		guessTextField.setPromptText("Guess");
 		guessTextField.setPrefSize(80, 10);
 		topHBox.getChildren().add(guessTextField);
@@ -126,7 +144,7 @@ public class NumberGuesser extends Application {
 		rotate.setDuration(Duration.millis(1000));
 		rotate.setNode(boxView);
 		
-		Text feedback = new Text();
+		
 		
 		
 		// guess button
@@ -166,6 +184,7 @@ public class NumberGuesser extends Application {
 				
 				if (guessNumber.equals(hiddenNumber)) {
 					feedback.setText("You Win!");
+					switchScenes(gameOverScene);
 				} else if (guessNumber < hiddenNumber) {
 					higherThan = guessNumber;
 					higherThanText.setText(guessNumber.toString());
@@ -176,8 +195,46 @@ public class NumberGuesser extends Application {
 					lowerThanText.setText(guessNumber.toString());
 					guessTextField.setPromptText("Guess Again...");
 				}
+				
+				
 			}
+			
+			public void switchScenes(Scene scene) {
+				primaryStage.setScene(scene);
+			}
+			
 		});
+		
+		// create game over scene
+		gameOverVBox = new VBox();
+		gameOverScene = new Scene(gameOverVBox);
+		
+		//
+		Text youWin = new Text("YOU WIN!");
+		Text yourScore = new Text("" + count);
+		Button playAgain = new Button("Plan Again");
+		gameOverVBox.getChildren().addAll(youWin, yourScore, playAgain);
+		
+		// set up button for game over scene to take back to the main screen and reset values
+		playAgain.setOnMouseClicked(new EventHandler<MouseEvent>() {
+
+			@Override
+			public void handle(MouseEvent arg0) {
+				// TODO Auto-generated method stub
+				resetValues();
+				switchScenes(mainScene);
+			}
+			
+			public void switchScenes(Scene scene) {
+				primaryStage.setScene(scene);
+			}
+			
+		});
+		
+		
+		
+		
+		
 		
 		topHBox.getChildren().add(guess);
 		topHBox.setMargin(guess, new Insets(10));
@@ -201,10 +258,6 @@ public class NumberGuesser extends Application {
 		isGreaterThan.setFont(new Font(20));
 		
 		
-
-		
-		
-		
 		// adding nodes to the right pane
 		Label isLowerThan = new Label("It's lower than...");
 		rightVBox.getChildren().add(isLowerThan);
@@ -217,12 +270,36 @@ public class NumberGuesser extends Application {
 		
 		
 		// set scene and show primaryStage
-		Scene scene = new Scene(border);
-		primaryStage.setScene(scene);
+		mainScene = new Scene(border);
+		primaryStage.setScene(mainScene);
 		primaryStage.setTitle("Number Guesser");
 		primaryStage.sizeToScene();
 		primaryStage.show();
 
+	}
+	
+	public void resetValues() {
+		if (recordScore != null ) {
+			if (count < recordScore) {
+				recordScore = count;
+			}
+		} else {
+			recordScore = count;
+		}
+		count = 0;
+		higherThan = minimum;
+		lowerThan = maximum;
+		hiddenNumber = (int) (Math.random() * (maximum)) + minimum; // random number between maximum and minimum
+		System.out.println(hiddenNumber);
+		guessNumber = null;
+		count = 0;
+		guessTextField.clear();
+		guessTextField.setPromptText("Guess");
+		higherThanText.setText(minimum.toString());
+		lowerThanText.setText(maximum.toString());
+		guessessFeedback.setText("Number of guesses: " + count);
+		feedback.setText("");
+		recordText.setText("Record: " + recordScore + " guesses");
 	}
 
 	public static void main(String[] args) {
