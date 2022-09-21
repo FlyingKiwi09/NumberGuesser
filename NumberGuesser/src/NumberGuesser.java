@@ -31,13 +31,12 @@ import javafx.util.Duration;
 public class NumberGuesser extends Application {
 
 	
-	
+	// for switching scenes
+	// https://www.youtube.com/watch?v=SB9AnciLmsw
 	private Scene mainScene;
 	
 	private Scene gameOverScene;
 	private VBox gameOverVBox;
-	
-	
 	
 	private final static Integer minimum = 0;
 	private final static Integer maximum = 100;
