@@ -22,6 +22,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
 import javafx.scene.transform.Rotate;
@@ -52,7 +53,7 @@ public class NumberGuesser extends Application {
 	private final Label guessessFeedback = new Label();
 	private final Text feedback = new Text();
 	private final Text recordText = new Text("Record: -");
-	
+	private final Text yourScore = new Text("" + count);
 	
 	public NumberGuesser() {
 		// TODO Auto-generated constructor stub
@@ -69,6 +70,7 @@ public class NumberGuesser extends Application {
 		higherThanText.setText(minimum.toString());
 		lowerThanText.setText(maximum.toString());
 		
+		// set hidden number
 		hiddenNumber = (int) (Math.random() * (maximum)) + minimum; // random number between maximum and minimum
 		System.out.println(hiddenNumber);
 		
@@ -183,6 +185,7 @@ public class NumberGuesser extends Application {
 				
 				if (guessNumber.equals(hiddenNumber)) {
 					feedback.setText("You Win!");
+					yourScore.setText("Guesses: " + count);
 					switchScenes(gameOverScene);
 				} else if (guessNumber < hiddenNumber) {
 					higherThan = guessNumber;
@@ -200,6 +203,8 @@ public class NumberGuesser extends Application {
 			
 			public void switchScenes(Scene scene) {
 				primaryStage.setScene(scene);
+				primaryStage.setWidth(300);
+				primaryStage.setHeight(300);
 			}
 			
 		});
@@ -208,24 +213,30 @@ public class NumberGuesser extends Application {
 		gameOverVBox = new VBox();
 		gameOverScene = new Scene(gameOverVBox);
 		
-		//
 		Text youWin = new Text("YOU WIN!");
-		Text yourScore = new Text("" + count);
+		youWin.setFont(Font.font("Verdana", FontWeight.BOLD, 40));
+		gameOverVBox.setBackground(new Background(new BackgroundFill(Color.ALICEBLUE, null, null)));
+		
 		Button playAgain = new Button("Plan Again");
 		gameOverVBox.getChildren().addAll(youWin, yourScore, playAgain);
+		gameOverVBox.setAlignment(Pos.TOP_CENTER);
+		gameOverVBox.setMargin(youWin, new Insets(20));
+		gameOverVBox.setMargin(yourScore, new Insets(10));
+		gameOverVBox.setMargin(playAgain, new Insets(10));
+		
 		
 		// set up button for game over scene to take back to the main screen and reset values
 		playAgain.setOnMouseClicked(new EventHandler<MouseEvent>() {
 
 			@Override
 			public void handle(MouseEvent arg0) {
-				// TODO Auto-generated method stub
 				resetValues();
 				switchScenes(mainScene);
 			}
 			
 			public void switchScenes(Scene scene) {
 				primaryStage.setScene(scene);
+				primaryStage.sizeToScene();
 			}
 			
 		});
